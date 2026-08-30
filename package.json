@@ -1,0 +1,19 @@
+{
+  "name": "campusledger",
+  "version": "1.0.0",
+  "description": "CampusLedger - Full-Stack Student Management System",
+  "scripts": {
+    "start:backend": "cd backend && npm run dev",
+    "start:frontend": "cd frontend && npm run dev",
+    "seed": "cd backend && npm run seed"
+  },
+  "keywords": [
+    "student-management-system",
+    "rbac",
+    "react",
+    "express",
+    "mongodb"
+  ],
+  "author": "CampusLedger Team",
+  "license": "MIT"
+}

@@ -1,0 +1,6 @@
+name,email,rollNumber,department,semester,section,phone,parentName,parentPhone,parentEmail,gender,bloodGroup
+David Kim,david.kim@campusledger.edu,CS2026-004,Computer Science & Engineering,4,A,+1 (555) 019-1001,John Kim,+1 (555) 019-1002,john.kim@gmail.com,Male,B+
+Emily Chen,emily.chen@campusledger.edu,CS2026-005,Computer Science & Engineering,4,A,+1 (555) 019-2001,Mary Chen,+1 (555) 019-2002,mary.chen@gmail.com,Female,A+
+Marcus Johnson,marcus.j@campusledger.edu,CS2026-006,Computer Science & Engineering,4,A,+1 (555) 019-3001,William Johnson,+1 (555) 019-3002,w.johnson@gmail.com,Male,O-
+Sophia Martinez,sophia.m@campusledger.edu,CS2026-007,Computer Science & Engineering,4,A,+1 (555) 019-4001,Elena Martinez,+1 (555) 019-4002,elena.m@gmail.com,Female,AB+
+Lucas Silva,lucas.silva@campusledger.edu,CS2026-008,Computer Science & Engineering,4,A,+1 (555) 019-5001,Carlos Silva,+1 (555) 019-5002,carlos.s@gmail.com,Male,O+
