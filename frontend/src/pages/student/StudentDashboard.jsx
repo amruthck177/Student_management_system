@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axiosInstance';
 import StatCard from '../../components/common/StatCard';
 import AlertBanner from '../../components/common/AlertBanner';
+import AIInsightWidget from '../../components/dashboard/AIInsightWidget';
 import {
   GraduationCap,
   ClipboardCheck,
@@ -93,6 +94,9 @@ const StudentDashboard = () => {
           message={`Your recorded attendance is currently ${stats.attendancePercentage}%, which is below the mandatory 75% collegiate examination eligibility criteria. Please contact your subject faculty immediately.`}
         />
       )}
+
+      {/* AI Performance Predictor & At-Risk Assistant */}
+      {studentProfile?._id && <AIInsightWidget studentId={studentProfile._id} />}
 
       {/* Stat Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

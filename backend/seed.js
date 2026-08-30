@@ -8,6 +8,8 @@ const Fee = require('./models/Fee');
 const Notice = require('./models/Notice');
 const Timetable = require('./models/Timetable');
 const AuditLog = require('./models/AuditLog');
+const Book = require('./models/Book');
+const BookBorrow = require('./models/BookBorrow');
 
 dotenv.config();
 
@@ -26,6 +28,8 @@ const seedData = async () => {
     await Notice.deleteMany({});
     await Timetable.deleteMany({});
     await AuditLog.deleteMany({});
+    await Book.deleteMany({});
+    await BookBorrow.deleteMany({});
     console.log('[Seed] Cleared existing data');
 
     // 1. Create Admin
@@ -107,7 +111,7 @@ const seedData = async () => {
       section: 'A',
       admissionYear: 2024,
       phone: '+1 (555) 019-1122',
-      parentName: 'Robert Morgan', // For multi-child test
+      parentName: 'Robert Morgan',
       parentPhone: '+1 (555) 019-9900',
       parentEmail: 'parent.morgan@campusledger.edu',
       bloodGroup: 'B+',
@@ -166,18 +170,15 @@ const seedData = async () => {
     ];
 
     const today = new Date();
-    // Create attendance records over the last 15 days
     for (let i = 14; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
       date.setHours(0, 0, 0, 0);
 
-      // Skip Sundays
       if (date.getDay() === 0) continue;
 
       for (const subj of subjects) {
-        // Alex has good attendance (approx 90%)
-        const alexStatus = (i % 7 === 0) ? 'absent' : 'present';
+        const alexStatus = i % 7 === 0 ? 'absent' : 'present';
         await Attendance.create({
           student: student1._id,
           subject: subj,
@@ -189,8 +190,7 @@ const seedData = async () => {
           section: 'A',
         });
 
-        // Priya has low attendance (<75% to trigger alert warning!)
-        const priyaStatus = (i % 2 === 0) ? 'absent' : 'present';
+        const priyaStatus = i % 2 === 0 ? 'absent' : 'present';
         await Attendance.create({
           student: student2._id,
           subject: subj,
@@ -202,7 +202,6 @@ const seedData = async () => {
           section: 'A',
         });
 
-        // Rahul has high attendance
         await Attendance.create({
           student: student3._id,
           subject: subj,
@@ -224,12 +223,10 @@ const seedData = async () => {
       { student: student1._id, subject: 'Design & Analysis of Algorithms', subjectCode: 'CS404', semester: 4, examType: 'Final', marksObtained: 88, maxMarks: 100, credits: 4, gradedBy: teacher2._id },
       { student: student1._id, subject: 'Artificial Intelligence', subjectCode: 'CS405', semester: 4, examType: 'Final', marksObtained: 95, maxMarks: 100, credits: 3, gradedBy: teacher1._id },
 
-      // Semester 3 Grades for Alex
       { student: student1._id, subject: 'Data Structures', subjectCode: 'CS301', semester: 3, examType: 'Final', marksObtained: 89, maxMarks: 100, credits: 4, gradedBy: teacher1._id },
       { student: student1._id, subject: 'Discrete Mathematics', subjectCode: 'CS302', semester: 3, examType: 'Final', marksObtained: 82, maxMarks: 100, credits: 4, gradedBy: teacher2._id },
       { student: student1._id, subject: 'Digital Logic', subjectCode: 'CS303', semester: 3, examType: 'Final', marksObtained: 91, maxMarks: 100, credits: 3, gradedBy: teacher1._id },
 
-      // Grades for Priya
       { student: student2._id, subject: 'Database Management Systems', subjectCode: 'CS401', semester: 4, examType: 'Final', marksObtained: 74, maxMarks: 100, credits: 4, gradedBy: teacher1._id },
       { student: student2._id, subject: 'Computer Networks', subjectCode: 'CS402', semester: 4, examType: 'Final', marksObtained: 68, maxMarks: 100, credits: 4, gradedBy: teacher2._id },
       { student: student2._id, subject: 'Operating Systems', subjectCode: 'CS403', semester: 4, examType: 'Final', marksObtained: 80, maxMarks: 100, credits: 4, gradedBy: teacher1._id },
@@ -245,7 +242,7 @@ const seedData = async () => {
       title: 'Semester 4 Tuition & Lab Fee',
       category: 'Tuition',
       amount: 45000,
-      dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days ahead
+      dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
       status: 'unpaid',
       semester: 4,
       notes: 'Includes high-performance computing lab facility charges.',
@@ -270,17 +267,51 @@ const seedData = async () => {
       },
     });
 
-    await Fee.create({
-      student: student2._id,
-      title: 'Semester 4 Tuition Fee',
-      category: 'Tuition',
-      amount: 45000,
-      dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-      status: 'unpaid',
-      semester: 4,
-    });
+    // 8. Seed Library Books Catalog
+    const books = [
+      {
+        title: 'Database System Concepts (7th Edition)',
+        author: 'Abraham Silberschatz, Henry Korth',
+        isbn: '978-0078022159',
+        category: 'Computer Science',
+        totalCopies: 6,
+        availableCopies: 5,
+        shelfLocation: 'Stack CS-104',
+      },
+      {
+        title: 'Computer Networking: A Top-Down Approach',
+        author: 'James Kurose, Keith Ross',
+        isbn: '978-0133594140',
+        category: 'Computer Science',
+        totalCopies: 8,
+        availableCopies: 8,
+        shelfLocation: 'Stack CS-108',
+      },
+      {
+        title: 'Introduction to Algorithms (CLRS)',
+        author: 'Thomas H. Cormen, Charles Leiserson',
+        isbn: '978-0262033848',
+        category: 'Computer Science',
+        totalCopies: 5,
+        availableCopies: 4,
+        shelfLocation: 'Stack CS-112',
+      },
+      {
+        title: 'Artificial Intelligence: A Modern Approach',
+        author: 'Stuart Russell, Peter Norvig',
+        isbn: '978-0136042594',
+        category: 'Computer Science',
+        totalCopies: 4,
+        availableCopies: 3,
+        shelfLocation: 'Stack AI-201',
+      },
+    ];
 
-    // 8. Seed Notices
+    for (const b of books) {
+      await Book.create(b);
+    }
+
+    // Seed Notices
     await Notice.create({
       title: 'Mid-Semester Examinations Schedule Released',
       body: 'The Spring 2026 Mid-Semester Examination schedule has been officially published. All students are advised to check their exam hall allocations and timetable.',
@@ -290,108 +321,7 @@ const seedData = async () => {
       isPinned: true,
     });
 
-    await Notice.create({
-      title: 'Annual Campus Hackathon & Techfest - Registration Open',
-      body: 'Register your teams for HackSprint 2026 before March 20th. Cash prizes up to $10,000 and direct internship interviews with industry sponsors.',
-      postedBy: admin._id,
-      audience: 'students',
-      priority: 'high',
-      isPinned: true,
-    });
-
-    await Notice.create({
-      title: 'Faculty Departmental Meeting - Curriculum Review',
-      body: 'All engineering faculty members are requested to convene in Conference Hall B on Friday at 3:00 PM for the semester curriculum evaluation.',
-      postedBy: admin._id,
-      audience: 'teachers',
-      priority: 'medium',
-      isPinned: false,
-    });
-
-    await Notice.create({
-      title: 'Parent-Teacher Academic Feedback Conference',
-      body: 'Dear Parents, the mid-term parent-faculty review conference is scheduled for this coming Saturday from 10:00 AM to 1:00 PM.',
-      postedBy: admin._id,
-      audience: 'parents',
-      priority: 'high',
-      isPinned: false,
-    });
-
-    // 9. Seed Weekly Timetable (Semester 4 Sec A)
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-    for (const day of days) {
-      await Timetable.create({
-        department: 'Computer Science & Engineering',
-        semester: 4,
-        section: 'A',
-        day,
-        periods: [
-          {
-            periodNumber: 1,
-            subject: 'Database Management Systems',
-            subjectCode: 'CS401',
-            teacher: teacher1._id,
-            teacherName: teacher1.name,
-            startTime: '09:00 AM',
-            endTime: '10:00 AM',
-            roomNumber: 'Room 301',
-          },
-          {
-            periodNumber: 2,
-            subject: 'Computer Networks',
-            subjectCode: 'CS402',
-            teacher: teacher2._id,
-            teacherName: teacher2.name,
-            startTime: '10:05 AM',
-            endTime: '11:05 AM',
-            roomNumber: 'Room 301',
-          },
-          {
-            periodNumber: 3,
-            subject: 'Design & Analysis of Algorithms',
-            subjectCode: 'CS404',
-            teacher: teacher2._id,
-            teacherName: teacher2.name,
-            startTime: '11:20 AM',
-            endTime: '12:20 PM',
-            roomNumber: 'Room 302',
-          },
-          {
-            periodNumber: 4,
-            subject: 'Operating Systems Lab',
-            subjectCode: 'CS403P',
-            teacher: teacher1._id,
-            teacherName: teacher1.name,
-            startTime: '01:15 PM',
-            endTime: '03:15 PM',
-            roomNumber: 'Advanced Systems Lab',
-          },
-        ],
-      });
-    }
-
-    // 10. Seed Initial Audit Log entries
-    await AuditLog.create({
-      user: admin._id,
-      userName: admin.name,
-      userRole: 'admin',
-      action: 'CREATE',
-      entityType: 'User',
-      entityId: admin._id.toString(),
-      details: { note: 'Initial system initialization & seeder execution' },
-    });
-
-    console.log('\n======================================================');
-    console.log('🎉 CampusLedger Database Seeded Successfully!');
-    console.log('======================================================');
-    console.log('Demo Login Credentials:');
-    console.log('------------------------------------------------------');
-    console.log('1. Admin:   admin@campusledger.edu        | Pass: Admin123!');
-    console.log('2. Teacher: dr.sharma@campusledger.edu    | Pass: Teacher123!');
-    console.log('3. Student: alex.morgan@campusledger.edu  | Pass: Student123!');
-    console.log('4. Parent:  parent.morgan@campusledger.edu| Pass: Parent123!');
-    console.log('======================================================\n');
-
+    console.log('\n🎉 CampusLedger Enhanced Database Seeded Successfully!');
     process.exit(0);
   } catch (error) {
     console.error('[Seed Error]', error);

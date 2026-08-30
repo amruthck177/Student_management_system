@@ -14,6 +14,7 @@ import {
   FileDown,
   UserCheck,
   BookOpen,
+  Library,
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -28,6 +29,7 @@ const Sidebar = () => {
           { to: '/admin/users', icon: Users, label: 'User Directory' },
           { to: '/admin/students', icon: GraduationCap, label: 'Students & Import' },
           { to: '/admin/fees', icon: CreditCard, label: 'Fee Management' },
+          { to: '/library', icon: Library, label: 'Library Catalog' },
           { to: '/notices', icon: Bell, label: 'Notices Board' },
           { to: '/timetable', icon: Calendar, label: 'Class Timetable' },
           { to: '/admin/audit-logs', icon: ShieldAlert, label: 'Audit Trail' },
@@ -38,6 +40,7 @@ const Sidebar = () => {
           { to: '/teacher/students', icon: GraduationCap, label: 'My Students' },
           { to: '/teacher/attendance', icon: ClipboardCheck, label: 'Mark Attendance' },
           { to: '/teacher/grades', icon: Award, label: 'Grade & Marks' },
+          { to: '/library', icon: Library, label: 'Library Center' },
           { to: '/timetable', icon: Calendar, label: 'My Timetable' },
           { to: '/notices', icon: Bell, label: 'Campus Notices' },
         ];
@@ -47,6 +50,7 @@ const Sidebar = () => {
           { to: '/student/attendance', icon: ClipboardCheck, label: 'Attendance & %' },
           { to: '/student/grades', icon: Award, label: 'Grades & CGPA' },
           { to: '/student/fees', icon: CreditCard, label: 'Fees & Payment' },
+          { to: '/library', icon: Library, label: 'Library Catalog' },
           { to: '/student/documents', icon: FileDown, label: 'ID & Report Cards' },
           { to: '/timetable', icon: Calendar, label: 'My Schedule' },
           { to: '/notices', icon: Bell, label: 'Notice Board' },
@@ -54,11 +58,13 @@ const Sidebar = () => {
       case 'parent':
         return [
           { to: '/parent/dashboard', icon: LayoutDashboard, label: 'Children Overview' },
+          { to: '/library', icon: Library, label: 'Library Books' },
           { to: '/notices', icon: Bell, label: 'Parent Notices' },
           { to: '/timetable', icon: Calendar, label: 'Class Schedule' },
         ];
       default:
         return [
+          { to: '/library', icon: Library, label: 'Library' },
           { to: '/notices', icon: Bell, label: 'Notices' },
           { to: '/timetable', icon: Calendar, label: 'Timetable' },
         ];

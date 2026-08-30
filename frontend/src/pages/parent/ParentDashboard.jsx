@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../api/axiosInstance';
 import StatCard from '../../components/common/StatCard';
 import AlertBanner from '../../components/common/AlertBanner';
+import AIInsightWidget from '../../components/dashboard/AIInsightWidget';
 import {
   Users,
   GraduationCap,
@@ -116,6 +117,9 @@ const ParentDashboard = () => {
               message={`Your child ${student.name}'s attendance is currently at ${metrics.attendancePercentage}%, which is below the mandatory 75% college requirement. Please advise them to attend pending lectures.`}
             />
           )}
+
+          {/* AI Advisor Card for Child */}
+          <AIInsightWidget studentId={student._id} />
 
           {/* Child Metrics Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import TwoFactorSetupModal from '../../pages/auth/TwoFactorSetupModal';
 import {
   Bell,
   LogOut,
@@ -10,6 +11,7 @@ import {
   Users,
   ChevronDown,
   Sparkles,
+  KeyRound,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -17,6 +19,7 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [is2FAModalOpen, setIs2FAModalOpen] = useState(false);
 
   const getRoleBadge = (role) => {
     switch (role) {
@@ -87,8 +90,11 @@ const Navbar = () => {
           {notificationsOpen && (
             <div className="absolute right-0 mt-2 w-80 glass-dropdown rounded-xl p-4 shadow-2xl border border-slate-800 z-50 text-xs">
               <div className="flex items-center justify-between pb-2 border-b border-slate-800 mb-3">
-                <span className="font-semibold text-slate-200">Recent Campus Alerts</span>
-                <span className="text-[10px] text-indigo-400">Live</span>
+                <span className="font-semibold text-slate-200">Live Campus Notifications</span>
+                <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  Connected
+                </span>
               </div>
               <div className="space-y-2.5">
                 <div className="p-2 rounded-lg bg-slate-800/40 border border-slate-800 text-slate-300">
@@ -96,8 +102,8 @@ const Navbar = () => {
                   <div className="text-[11px] text-slate-400 mt-0.5">Check the official notice board for details.</div>
                 </div>
                 <div className="p-2 rounded-lg bg-slate-800/40 border border-slate-800 text-slate-300">
-                  <div className="font-medium text-slate-100">Fee Payment Reminder</div>
-                  <div className="text-[11px] text-slate-400 mt-0.5">Semester dues for 2025-26 are now active.</div>
+                  <div className="font-medium text-slate-100">Library Book Catalog Synchronized</div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">New core textbook titles are now available for reservation.</div>
                 </div>
               </div>
               <div className="mt-3 pt-2 border-t border-slate-800 text-center">
@@ -144,6 +150,17 @@ const Navbar = () => {
                 <button
                   onClick={() => {
                     setDropdownOpen(false);
+                    setIs2FAModalOpen(true);
+                  }}
+                  className="w-full px-4 py-2 text-left text-xs text-indigo-300 hover:bg-indigo-500/10 flex items-center gap-2 transition-colors"
+                >
+                  <KeyRound className="w-4 h-4" />
+                  <span>2FA Security Setup</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setDropdownOpen(false);
                     logout();
                   }}
                   className="w-full px-4 py-2 text-left text-xs text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 transition-colors"
@@ -156,6 +173,11 @@ const Navbar = () => {
           )}
         </div>
       </div>
+
+      <TwoFactorSetupModal
+        isOpen={is2FAModalOpen}
+        onClose={() => setIs2FAModalOpen(false)}
+      />
     </header>
   );
 };

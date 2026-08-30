@@ -1,6 +1,8 @@
 const Grade = require('../models/Grade');
 const Student = require('../models/Student');
+const Attendance = require('../models/Attendance');
 const { calculateSemesterGPA, calculateCumulativeCGPA } = require('../utils/cgpaCalculator');
+const { analyzeStudentPerformance } = require('../utils/performancePredictor');
 const { logAuditAction } = require('../middleware/auditLogger');
 
 // @desc    Get student grades with automated GPA and CGPA
@@ -51,6 +53,39 @@ const getGradesByStudent = async (req, res) => {
       totalGradesCount: allGrades.length,
       filteredGrades: grades,
       semesterSummary: semesterWiseSummary,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Get AI Academic Performance Prediction & At-Risk Diagnostics
+// @route   GET /api/grades/:studentId/ai-insights
+// @access  Admin, Teacher, Student (own), Parent (child)
+const getAIInsights = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ success: false, message: 'Student not found' });
+    }
+
+    const grades = await Grade.find({ student: studentId });
+    const attendances = await Attendance.find({ student: studentId });
+
+    const total = attendances.length;
+    const present = attendances.filter((a) => a.status === 'present').length;
+    const percentage = total > 0 ? parseFloat(((present / total) * 100).toFixed(1)) : 88.0;
+    const lowAttendanceWarning = total > 0 && percentage < 75;
+
+    const insights = analyzeStudentPerformance(student, grades, {
+      overallPercentage: percentage,
+      lowAttendanceWarning,
+    });
+
+    res.json({
+      success: true,
+      insights,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -185,6 +220,7 @@ const batchAddGrades = async (req, res) => {
 
 module.exports = {
   getGradesByStudent,
+  getAIInsights,
   addOrUpdateGrade,
   batchAddGrades,
 };

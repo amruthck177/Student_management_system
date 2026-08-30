@@ -1,4 +1,6 @@
+const http = require('http');
 const express = require('express');
+const { Server } = require('socket.io');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
@@ -11,10 +13,7 @@ dotenv.config();
 connectDB();
 
 const app = express();
-
-// Body parser
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const server = http.createServer(app);
 
 // Enable CORS
 const allowedOrigins = [
@@ -26,22 +25,47 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // allow requests with no origin (like mobile apps or curl requests)
       if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
-      return callback(null, true); // Allow during local dev for smooth pair-programming
+      return callback(null, true);
     },
     credentials: true,
   })
 );
 
+// Setup Socket.io
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
+
+io.on('connection', (socket) => {
+  console.log(`[Socket.io] Client connected: ${socket.id}`);
+
+  socket.on('disconnect', () => {
+    console.log(`[Socket.io] Client disconnected: ${socket.id}`);
+  });
+});
+
+// Helper to make io available in req
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // Basic health check route
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
-    system: 'CampusLedger API',
-    version: '1.0.0',
+    system: 'CampusLedger API (Enhanced with WebSockets & AI)',
+    version: '1.2.0',
     timestamp: new Date().toISOString(),
   });
 });
@@ -56,19 +80,16 @@ app.use('/api/notices', require('./routes/noticeRoutes'));
 app.use('/api/timetable', require('./routes/timetableRoutes'));
 app.use('/api/audit-logs', require('./routes/auditRoutes'));
 app.use('/api/parent', require('./routes/parentRoutes'));
+app.use('/api/library', require('./routes/libraryRoutes'));
+app.use('/api/2fa', require('./routes/twoFactorRoutes'));
 
 // Custom Error Handling Middleware
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
-  console.log(`[CampusLedger] Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`[CampusLedger] Enhanced Server running on port ${PORT} with WebSockets active`);
 });
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  console.error(`[UnhandledRejection Error] ${err.message}`);
-});
-
-module.exports = app;
+module.exports = { app, server, io };
