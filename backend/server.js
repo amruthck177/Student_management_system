@@ -38,7 +38,7 @@ app.use(
 const io = new Server(server, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
   },
 });
 
@@ -64,13 +64,13 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
-    system: 'CampusLedger API (Enhanced with WebSockets & AI)',
-    version: '1.2.0',
+    system: 'CampusLedger Enterprise ERP API (v2.0)',
+    version: '2.0.0',
     timestamp: new Date().toISOString(),
   });
 });
 
-// Mount Routes
+// Mount Core & Enterprise Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/students', require('./routes/studentRoutes'));
 app.use('/api/attendance', require('./routes/attendanceRoutes'));
@@ -82,6 +82,10 @@ app.use('/api/audit-logs', require('./routes/auditRoutes'));
 app.use('/api/parent', require('./routes/parentRoutes'));
 app.use('/api/library', require('./routes/libraryRoutes'));
 app.use('/api/2fa', require('./routes/twoFactorRoutes'));
+app.use('/api/assignments', require('./routes/assignmentRoutes'));
+app.use('/api/placements', require('./routes/placementRoutes'));
+app.use('/api/hostel', require('./routes/hostelRoutes'));
+app.use('/api/appointments', require('./routes/appointmentRoutes'));
 
 // Custom Error Handling Middleware
 app.use(errorHandler);
@@ -89,7 +93,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
-  console.log(`[CampusLedger] Enhanced Server running on port ${PORT} with WebSockets active`);
+  console.log(`[CampusLedger] Enterprise Server running on port ${PORT} with WebSockets & LMS active`);
 });
 
 module.exports = { app, server, io };

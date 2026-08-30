@@ -15,6 +15,10 @@ import {
   UserCheck,
   BookOpen,
   Library,
+  FileText,
+  Briefcase,
+  Home,
+  Clock,
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -29,6 +33,10 @@ const Sidebar = () => {
           { to: '/admin/users', icon: Users, label: 'User Directory' },
           { to: '/admin/students', icon: GraduationCap, label: 'Students & Import' },
           { to: '/admin/fees', icon: CreditCard, label: 'Fee Management' },
+          { to: '/assignments', icon: FileText, label: 'Assignments LMS' },
+          { to: '/placements', icon: Briefcase, label: 'Placement Drives' },
+          { to: '/hostel', icon: Home, label: 'Hostel & Facilities' },
+          { to: '/appointments', icon: Clock, label: 'Consultations' },
           { to: '/library', icon: Library, label: 'Library Catalog' },
           { to: '/notices', icon: Bell, label: 'Notices Board' },
           { to: '/timetable', icon: Calendar, label: 'Class Timetable' },
@@ -40,6 +48,8 @@ const Sidebar = () => {
           { to: '/teacher/students', icon: GraduationCap, label: 'My Students' },
           { to: '/teacher/attendance', icon: ClipboardCheck, label: 'Mark Attendance' },
           { to: '/teacher/grades', icon: Award, label: 'Grade & Marks' },
+          { to: '/assignments', icon: FileText, label: 'Assignments LMS' },
+          { to: '/appointments', icon: Clock, label: 'Parent Meetings' },
           { to: '/library', icon: Library, label: 'Library Center' },
           { to: '/timetable', icon: Calendar, label: 'My Timetable' },
           { to: '/notices', icon: Bell, label: 'Campus Notices' },
@@ -49,6 +59,9 @@ const Sidebar = () => {
           { to: '/student/dashboard', icon: LayoutDashboard, label: 'My Overview' },
           { to: '/student/attendance', icon: ClipboardCheck, label: 'Attendance & %' },
           { to: '/student/grades', icon: Award, label: 'Grades & CGPA' },
+          { to: '/assignments', icon: FileText, label: 'Assignments' },
+          { to: '/placements', icon: Briefcase, label: 'Placement Drives' },
+          { to: '/hostel', icon: Home, label: 'Hostel & Repairs' },
           { to: '/student/fees', icon: CreditCard, label: 'Fees & Payment' },
           { to: '/library', icon: Library, label: 'Library Catalog' },
           { to: '/student/documents', icon: FileDown, label: 'ID & Report Cards' },
@@ -58,6 +71,7 @@ const Sidebar = () => {
       case 'parent':
         return [
           { to: '/parent/dashboard', icon: LayoutDashboard, label: 'Children Overview' },
+          { to: '/appointments', icon: Clock, label: 'Book Consultation' },
           { to: '/library', icon: Library, label: 'Library Books' },
           { to: '/notices', icon: Bell, label: 'Parent Notices' },
           { to: '/timetable', icon: Calendar, label: 'Class Schedule' },
@@ -86,15 +100,15 @@ const Sidebar = () => {
               CampusLedger
             </h1>
             <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
-              Student System
+              Enterprise v2.0
             </p>
           </div>
         </div>
 
         {/* Navigation List */}
-        <div className="px-3 py-4 space-y-1">
+        <div className="px-3 py-4 space-y-1 overflow-y-auto max-h-[calc(100vh-140px)]">
           <div className="px-3 py-2 text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
-            Menu Navigation
+            Navigation Menu
           </div>
           {navLinks.map((item) => {
             const Icon = item.icon;
@@ -103,7 +117,7 @@ const Sidebar = () => {
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                  `flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                     isActive
                       ? 'bg-indigo-600/15 text-indigo-400 border border-indigo-500/30 shadow-sm shadow-indigo-500/10'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
@@ -123,10 +137,10 @@ const Sidebar = () => {
         <div className="glass-card p-3 rounded-xl border border-slate-800 text-xs">
           <div className="flex items-center gap-2 text-indigo-400 font-semibold mb-1">
             <UserCheck className="w-4 h-4" />
-            <span>Campus Support</span>
+            <span>Enterprise Support</span>
           </div>
           <p className="text-[11px] text-slate-400">
-            Need help? Reach out to support@campusledger.edu
+            support@campusledger.edu
           </p>
         </div>
       </div>

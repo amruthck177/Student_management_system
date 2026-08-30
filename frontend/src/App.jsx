@@ -37,6 +37,10 @@ import ParentDashboard from './pages/parent/ParentDashboard';
 import NoticeBoard from './pages/shared/NoticeBoard';
 import TimetableViewer from './pages/shared/TimetableViewer';
 import LibraryCatalog from './pages/shared/LibraryCatalog';
+import AssignmentPortal from './pages/shared/AssignmentPortal';
+import PlacementPortal from './pages/shared/PlacementPortal';
+import HostelPortal from './pages/shared/HostelPortal';
+import AppointmentScheduler from './pages/shared/AppointmentScheduler';
 
 const RootRedirect = () => {
   const { user, token } = useAuth();
@@ -63,10 +67,14 @@ function App() {
             {/* Protected Application Routes */}
             <Route element={<ProtectedRoute />}>
               <Route element={<AppLayout />}>
-                {/* Shared Routes */}
+                {/* Shared Enterprise Routes */}
                 <Route path="/notices" element={<NoticeBoard />} />
                 <Route path="/timetable" element={<TimetableViewer />} />
                 <Route path="/library" element={<LibraryCatalog />} />
+                <Route path="/assignments" element={<AssignmentPortal />} />
+                <Route path="/placements" element={<PlacementPortal />} />
+                <Route path="/hostel" element={<HostelPortal />} />
+                <Route path="/appointments" element={<AppointmentScheduler />} />
 
                 {/* Admin Routes */}
                 <Route element={<ProtectedRoute allowedRoles={['admin']} />}>

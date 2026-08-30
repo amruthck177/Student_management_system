@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # MongoDB Database Service
+  mongodb:
+    image: mongo:6.0
+    container_name: campusledger_mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - campusledger_net
+
+  # Express Backend REST API & WebSockets
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: campusledger_backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongodb:27017/campusledger
+      - JWT_SECRET=campusledger_super_secret_jwt_key_2026_secure
+      - JWT_EXPIRES_IN=7d
+      - CLIENT_ORIGIN=http://localhost:5173
+    depends_on:
+      - mongodb
+    networks:
+      - campusledger_net
+
+  # React SPA Frontend (Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: campusledger_frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - campusledger_net
+
+volumes:
+  mongo_data:
+
+networks:
+  campusledger_net:
+    driver: bridge

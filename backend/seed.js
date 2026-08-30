@@ -10,6 +10,13 @@ const Timetable = require('./models/Timetable');
 const AuditLog = require('./models/AuditLog');
 const Book = require('./models/Book');
 const BookBorrow = require('./models/BookBorrow');
+const Assignment = require('./models/Assignment');
+const Submission = require('./models/Submission');
+const PlacementDrive = require('./models/PlacementDrive');
+const JobApplication = require('./models/JobApplication');
+const HostelRoom = require('./models/HostelRoom');
+const MaintenanceTicket = require('./models/MaintenanceTicket');
+const Appointment = require('./models/Appointment');
 
 dotenv.config();
 
@@ -30,6 +37,13 @@ const seedData = async () => {
     await AuditLog.deleteMany({});
     await Book.deleteMany({});
     await BookBorrow.deleteMany({});
+    await Assignment.deleteMany({});
+    await Submission.deleteMany({});
+    await PlacementDrive.deleteMany({});
+    await JobApplication.deleteMany({});
+    await HostelRoom.deleteMany({});
+    await MaintenanceTicket.deleteMany({});
+    await Appointment.deleteMany({});
     console.log('[Seed] Cleared existing data');
 
     // 1. Create Admin
@@ -222,14 +236,7 @@ const seedData = async () => {
       { student: student1._id, subject: 'Operating Systems', subjectCode: 'CS403', semester: 4, examType: 'Final', marksObtained: 78, maxMarks: 100, credits: 4, gradedBy: teacher1._id },
       { student: student1._id, subject: 'Design & Analysis of Algorithms', subjectCode: 'CS404', semester: 4, examType: 'Final', marksObtained: 88, maxMarks: 100, credits: 4, gradedBy: teacher2._id },
       { student: student1._id, subject: 'Artificial Intelligence', subjectCode: 'CS405', semester: 4, examType: 'Final', marksObtained: 95, maxMarks: 100, credits: 3, gradedBy: teacher1._id },
-
-      { student: student1._id, subject: 'Data Structures', subjectCode: 'CS301', semester: 3, examType: 'Final', marksObtained: 89, maxMarks: 100, credits: 4, gradedBy: teacher1._id },
-      { student: student1._id, subject: 'Discrete Mathematics', subjectCode: 'CS302', semester: 3, examType: 'Final', marksObtained: 82, maxMarks: 100, credits: 4, gradedBy: teacher2._id },
-      { student: student1._id, subject: 'Digital Logic', subjectCode: 'CS303', semester: 3, examType: 'Final', marksObtained: 91, maxMarks: 100, credits: 3, gradedBy: teacher1._id },
-
       { student: student2._id, subject: 'Database Management Systems', subjectCode: 'CS401', semester: 4, examType: 'Final', marksObtained: 74, maxMarks: 100, credits: 4, gradedBy: teacher1._id },
-      { student: student2._id, subject: 'Computer Networks', subjectCode: 'CS402', semester: 4, examType: 'Final', marksObtained: 68, maxMarks: 100, credits: 4, gradedBy: teacher2._id },
-      { student: student2._id, subject: 'Operating Systems', subjectCode: 'CS403', semester: 4, examType: 'Final', marksObtained: 80, maxMarks: 100, credits: 4, gradedBy: teacher1._id },
     ];
 
     for (const g of gradesData) {
@@ -246,25 +253,6 @@ const seedData = async () => {
       status: 'unpaid',
       semester: 4,
       notes: 'Includes high-performance computing lab facility charges.',
-    });
-
-    await Fee.create({
-      student: student1._id,
-      title: 'Mid-Term Examination & Assessment Fee',
-      category: 'Examination',
-      amount: 3500,
-      dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-      status: 'paid',
-      paidAmount: 3500,
-      semester: 4,
-      paymentDetails: {
-        razorpayOrderId: 'order_test_987654321',
-        razorpayPaymentId: 'pay_test_123456789',
-        razorpaySignature: 'sig_test_verified',
-        paidAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
-        receiptNumber: 'CLR-2026-904123',
-        paymentMethod: 'Online Razorpay / Card',
-      },
     });
 
     // 8. Seed Library Books Catalog
@@ -287,41 +275,131 @@ const seedData = async () => {
         availableCopies: 8,
         shelfLocation: 'Stack CS-108',
       },
-      {
-        title: 'Introduction to Algorithms (CLRS)',
-        author: 'Thomas H. Cormen, Charles Leiserson',
-        isbn: '978-0262033848',
-        category: 'Computer Science',
-        totalCopies: 5,
-        availableCopies: 4,
-        shelfLocation: 'Stack CS-112',
-      },
-      {
-        title: 'Artificial Intelligence: A Modern Approach',
-        author: 'Stuart Russell, Peter Norvig',
-        isbn: '978-0136042594',
-        category: 'Computer Science',
-        totalCopies: 4,
-        availableCopies: 3,
-        shelfLocation: 'Stack AI-201',
-      },
     ];
-
     for (const b of books) {
       await Book.create(b);
     }
 
-    // Seed Notices
-    await Notice.create({
-      title: 'Mid-Semester Examinations Schedule Released',
-      body: 'The Spring 2026 Mid-Semester Examination schedule has been officially published. All students are advised to check their exam hall allocations and timetable.',
-      postedBy: admin._id,
-      audience: 'all',
-      priority: 'urgent',
-      isPinned: true,
+    // 9. Seed Assignments LMS
+    const assign1 = await Assignment.create({
+      title: 'Relational Database Schema Normalization & Indexing Project',
+      description: 'Design a 3NF normalized schema for a multi-tenant hospital ledger with B-Tree indexes on composite lookup queries.',
+      subject: 'Database Management Systems',
+      department: 'Computer Science & Engineering',
+      semester: 4,
+      section: 'A',
+      deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+      maxMarks: 25,
+      createdBy: teacher1._id,
     });
 
-    console.log('\n🎉 CampusLedger Enhanced Database Seeded Successfully!');
+    const assign2 = await Assignment.create({
+      title: 'Socket Programming & TCP Handshake Packet Analysis',
+      description: 'Implement a multi-threaded TCP chat server in Node.js or C and capture Wireshark PCAP traces.',
+      subject: 'Computer Networks',
+      department: 'Computer Science & Engineering',
+      semester: 4,
+      section: 'A',
+      deadline: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000),
+      maxMarks: 20,
+      createdBy: teacher2._id,
+    });
+
+    // Seed student submission
+    await Submission.create({
+      assignment: assign1._id,
+      student: student1._id,
+      content: 'Hospital ledger schema designed with 3NF compliance, PostgreSQL scripts, and EXPLAIN ANALYZE traces.',
+      fileUrl: 'https://drive.google.com/sample_alex_schema.pdf',
+      status: 'submitted',
+    });
+
+    // 10. Seed Placement Recruitment Drives
+    const drive1 = await PlacementDrive.create({
+      companyName: 'Google LLC',
+      roleTitle: 'Software Engineer - University Graduate (L3)',
+      packageCTC: '$145,000 / annum',
+      location: 'Mountain View, CA / Cambridge, MA (Hybrid)',
+      minCGPA: 8.5,
+      allowedDepartments: ['Computer Science & Engineering', 'Electronics'],
+      maxBacklogs: 0,
+      applicationDeadline: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
+      jobDescription: 'Build high-scale distributed backend systems, Kubernetes orchestration pipelines, and scalable APIs.',
+      status: 'active',
+      postedBy: admin._id,
+    });
+
+    const drive2 = await PlacementDrive.create({
+      companyName: 'Microsoft Corporation',
+      roleTitle: 'Cloud Solution & Systems Architect',
+      packageCTC: '$135,000 / annum',
+      location: 'Redmond, WA / Boston, MA',
+      minCGPA: 7.8,
+      allowedDepartments: ['Computer Science & Engineering'],
+      maxBacklogs: 0,
+      applicationDeadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+      jobDescription: 'Design Azure multi-region cloud infrastructures and microservice architectures.',
+      status: 'active',
+      postedBy: admin._id,
+    });
+
+    // Seed student application
+    await JobApplication.create({
+      placementDrive: drive1._id,
+      student: student1._id,
+      appliedCGPA: 8.85,
+      status: 'interviewing',
+      interviewRound: 'Technical Architecture Round 2',
+      feedback: 'Strong performance on distributed systems and data structures.',
+    });
+
+    // 11. Seed Hostel Rooms & Maintenance Tickets
+    const room1 = await HostelRoom.create({
+      hostelBlock: 'Aryabhatta Hall Block-A',
+      roomNumber: '304',
+      capacity: 2,
+      occupiedCount: 1,
+      roomType: 'AC Double',
+      floor: 3,
+      residents: [student1._id],
+    });
+
+    const room2 = await HostelRoom.create({
+      hostelBlock: 'Aryabhatta Hall Block-A',
+      roomNumber: '305',
+      capacity: 2,
+      occupiedCount: 1,
+      roomType: 'Non-AC Double',
+      floor: 3,
+      residents: [student3._id],
+    });
+
+    await MaintenanceTicket.create({
+      student: student1._id,
+      hostelBlock: 'Aryabhatta Hall Block-A',
+      roomNumber: '304',
+      title: 'Study Desk Lamp Circuit Sparking',
+      category: 'Electrical',
+      description: 'The desk light socket is experiencing voltage fluctuations and requires socket replacement.',
+      priority: 'High',
+      status: 'In Progress',
+      resolutionNotes: 'Electrician dispatched for evening inspection.',
+    });
+
+    // 12. Seed Parent-Teacher Consultations
+    await Appointment.create({
+      parent: parent._id,
+      teacher: teacher1._id,
+      student: student1._id,
+      requestedDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      timeSlot: '10:30 AM - 10:45 AM',
+      topic: 'Semester 4 Mid-Term Progress & Capstone Guidance',
+      status: 'confirmed',
+      meetingLink: 'https://meet.google.com/cmp-ldgr-edu',
+      notes: 'Consultation confirmed for Thursday morning.',
+    });
+
+    console.log('\n🎉 CampusLedger Enterprise v2.0 Database Seeded Successfully!');
     process.exit(0);
   } catch (error) {
     console.error('[Seed Error]', error);
