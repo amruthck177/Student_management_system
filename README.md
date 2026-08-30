@@ -13,7 +13,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 <p align="center">
-  A production-ready, full-stack university enterprise resource planning (ERP) platform featuring <strong>Multi-Role RBAC</strong>, <strong>AI-Driven Academic Diagnostics</strong>, <strong>Real-Time WebSockets</strong>, <strong>Assignments LMS</strong>, <strong>Placement & Career Cell</strong>, <strong>Hostel Facilities Management</strong>, <strong>Parent-Faculty Appointment Booking</strong>, and <strong>Automated Fee Reconciliation</strong>.
+  A production-grade, full-stack university enterprise resource planning (ERP) platform featuring <strong>Multi-Tier RBAC</strong>, <strong>AI-Driven Academic Diagnostics</strong>, <strong>Real-Time WebSockets</strong>, <strong>Assignments LMS</strong>, <strong>Placement & Career Cell</strong>, <strong>Hostel Facilities Management</strong>, <strong>Parent-Faculty Appointment Booking</strong>, <strong>Library Center</strong>, <strong>PDFKit Document Streaming</strong>, and <strong>Automated Fee Reconciliation</strong>.
 </p>
 
 [Key Features](#-enterprise-feature-matrix) • [Architecture](#-system-architecture) • [Demo Logins](#-demo-credentials--1-click-switchers) • [Docker Deployment](#-docker-deployment) • [API Reference](#-complete-api-reference)
@@ -25,13 +25,14 @@
 ## 📑 Table of Contents
 
 1. [Enterprise Feature Matrix](#-enterprise-feature-matrix)
-2. [Demo Credentials & 1-Click Switchers](#-demo-credentials--1-click-switchers)
+2. [Demo Credentials & 1-Click Role Switchers](#-demo-credentials--1-click-switchers)
 3. [System Architecture & Data Flow](#-system-architecture)
-4. [Role Capabilities Breakdown](#-role-capabilities-breakdown)
-5. [Complete API Reference](#-complete-api-reference)
-6. [Docker & Local Setup Guide](#-installation--getting-started)
-7. [Environment Variables Specification](#-environment-variables-specification)
-8. [Security Governance & Auditing](#-security-governance--auditing)
+4. [Role Capabilities & Portals](#-role-capabilities--portals)
+5. [Core Mathematical Algorithms](#-core-mathematical-algorithms)
+6. [Complete API Reference](#-complete-api-reference)
+7. [Docker & Local Setup Guide](#-installation--getting-started)
+8. [Environment Variables Specification](#-environment-variables-specification)
+9. [Security Governance & Auditing](#-security-governance--auditing)
 
 ---
 
@@ -55,7 +56,7 @@
 
 ## ⚡ Demo Credentials & 1-Click Switchers
 
-The login screen at `http://localhost:5173/login` features **1-Click Autofill Buttons** for instant evaluation:
+The login screen at `http://localhost:5173/login` features **1-Click Autofill Buttons** for instant evaluation across all roles:
 
 | Role | Demo Email | Password | Primary Capabilities & Scope |
 | :--- | :--- | :--- | :--- |
@@ -116,6 +117,22 @@ graph TD
 
 ---
 
+## 🧮 Core Mathematical Algorithms
+
+### 1. 10-Point Academic CGPA & GPA Formula
+$$\text{Semester GPA} = \frac{\sum_{i=1}^{n} (\text{Grade Point}_i \times \text{Credits}_i)}{\sum_{i=1}^{n} \text{Credits}_i}$$
+
+$$\text{Cumulative CGPA} = \frac{\sum_{j=1}^{m} (\text{Grade Point}_j \times \text{Credits}_j)}{\sum_{j=1}^{m} \text{Credits}_j}$$
+
+### 2. Mandatory 75% Attendance Warning Logic
+$$\text{Attendance Rate (\%)} = \left(\frac{\text{Sessions Present}}{\text{Total Conducted Sessions}}\right) \times 100$$
+- If $\text{Attendance Rate} < 75.0\%$: System triggers low-attendance danger banners across student, parent, and teacher consoles.
+
+### 3. Server-Side Cryptographic Payment Verification
+$$\text{Signature} = \text{HMAC-SHA256}(\text{order\_id} + "|" + \text{payment\_id}, \text{RAZORPAY\_KEY\_SECRET})$$
+
+---
+
 ## 📡 Complete API Reference
 
 ### 📚 Coursework & LMS (`/api/assignments`)
@@ -151,11 +168,20 @@ graph TD
 | `POST` | `/api/appointments` | Parent | Request 1-on-1 consultation slot with faculty |
 | `PATCH`| `/api/appointments/:id/status` | Teacher, Admin | Confirm appointment & attach Google Meet link |
 
+### 🔐 Authentication & Security (`/api/auth` & `/api/2fa`)
+| Method | Endpoint | Authorization | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/login` | Public | Authenticate credentials & return JWT |
+| `POST` | `/api/auth/register` | Admin | Provision a new user account |
+| `GET` | `/api/auth/users` | Admin | Paginated user directory |
+| `POST` | `/api/2fa/generate` | Authenticated | Generate TOTP secret & QR code data URL |
+| `POST` | `/api/2fa/verify` | Authenticated | Verify 6-digit TOTP code and enable 2FA |
+
 ---
 
 ## 🐳 Docker Deployment
 
-You can deploy the entire stack (MongoDB + Backend API + React Frontend) with a single command:
+Deploy the entire stack with a single command:
 
 ```bash
 # Clone the repository
